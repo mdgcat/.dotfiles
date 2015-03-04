@@ -83,7 +83,7 @@ When setting up a new Mac, you may want to install some common Homebrew formulae
 ## Feedback
 
 Suggestions/improvements
-[welcome](https://github.com/simlay/.dotfiles/issues)!
+[welcome](https://github.com/mdgcat/.dotfiles/issues)!
 
 ## Thanks to…
 
