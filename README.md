@@ -1,4 +1,4 @@
-# Michael’s dotfiles
+# GCAT’s dotfiles
 
 ## Installation
 
@@ -87,6 +87,7 @@ Suggestions/improvements
 
 ## Thanks to…
 
+* [Sebastian Imlay](http://www.github.com/simlay) for sharing his [amazing collection of dotfiles](https://github.com/simlay/dotfiles)
 * [Ivan Malison](http://www.github.com/IvanMalison) for sharing his [amazing collection of dotfiles](https://github.com/IvanMalison/dotfiles)
 * [Mathias Bynens](http://www.github.com/mathiasbynens) for sharing his [amazing collection of dotfiles](https://github.com/mathiasbynens/dotfiles)
 * [Gianni Chiappetta](http://gf3.ca/) for sharing his [amazing collection of dotfiles](https://github.com/gf3/dotfiles)
