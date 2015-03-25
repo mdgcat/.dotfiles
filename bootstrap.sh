@@ -2,7 +2,7 @@
 cd "$(dirname "${BASH_SOURCE}")"
 
 function doIt() {
-    exclude_list="setup.sh .git .gitmodules .DS_store bootstrap.sh README.md .gitconfig .osx .path .wgetrc .vim more_python.txt requirements.txt .brew .functions .gitignore"
+    exclude_list="setup.sh .git .gitmodules .DS_store bootstrap.sh README.md .gitconfig .osx .path .wgetrc .vim more_python.txt requirements.txt .brew .functions .gitignore .xinitrc"
 
     for file in .*; do
         if ! [[ $exclude_list =~ $file ]]

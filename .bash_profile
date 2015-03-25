@@ -93,3 +93,5 @@ source ~/.git-prompt.sh
 # Enable tab-completion of Docker commands
 source /etc/bash_completion.d/docker.io
 
+# Some Powerline segments e.g. cwd and cvs_branch needs to find the current working directory of the active pane. 
+PS1="$PS1"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
