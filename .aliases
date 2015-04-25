@@ -57,3 +57,6 @@ alias egrep='egrep --color=auto'
 
 # for git
 alias log='git log --stat --decorate --oneline --no-merges'
+
+# for docker
+alias fig='docker-compose'
