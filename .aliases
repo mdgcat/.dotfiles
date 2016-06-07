@@ -8,6 +8,12 @@ alias .5='cd ../../../../../'
 alias .6='cd ../../../../../../' 
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
+alias quake=~/Applications/ioquake3/ioquake3.app/Contents/MacOS/ioquake3
+alias fig="docker-compose"
+alias mplayer="mpv"
+alias docker-start="bash --login '/Applications/Docker/Docker Quickstart Terminal.app/Contents/Resources/Scripts/start.sh'"
+alias smyers="mpv 'https://www.youtube.com/watch?v=4k1xY7v8dDQ'"
+alias weather='curl http://wttr.in/seattle'
 
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`
@@ -41,7 +47,7 @@ alias localip="ipconfig getifaddr en1"
 alias ips="ifconfig -a | grep -o 'inet6\? \(\([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\)\|[a-fA-F0-9:]\+\)' | sed -e 's/inet6* //'"
 
 # Enhanced WHOIS lookups
-alias whois="whois -h whois-servers.net"
+# alias whois="whois -h whois-servers.net"
 
 # View HTTP traffic
 alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
