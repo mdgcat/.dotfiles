@@ -64,19 +64,18 @@ xterm*|rxvt*)
     ;;
 esac
 
-
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 
 # Runs all files seperately
-for file in ~/.{path,exports,aliases,functions,extra,prompt,git-completion.bash,hub.bash_completion.sh}; do
+for file in ~/.{exports,aliases,prompt}; do
         [ -r "$file" ] && source "$file"
     [ -d "$file" ] && source "$file/*"
 done
 unset file
-            
+
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -88,15 +87,11 @@ if ! shopt -oq posix; then
   fi
 fi
 
-source ~/.git-prompt.sh
-
-# Enable tab-completion of Docker commands
-source /etc/bash_completion.d/docker.io
-
-# Keymapping 
+# Keymapping
 # CAPS LOCK to CTRL-L
-xmodmap ~/.Xmodmap
+xmodmap -e 'keycode 66 = Control_L'
+xmodmap -e 'clear Lock'
+xmodmap -e 'add Control = Control_L'
 
-# Some Powerline segments e.g. cwd and cvs_branch needs to find the current working directory of the active pane. 
+# Some Powerline segments e.g. cwd and cvs_branch needs to find the current working directory of the active pane.
 PS1="$PS1"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
-
