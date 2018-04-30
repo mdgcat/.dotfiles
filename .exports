@@ -20,17 +20,27 @@ export LESS_TERMCAP_md="$ORANGE"
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X"
 
-#EXPORT variables for Android SDK
-# export ANDROID_HOME=/usr/local/android-sdk-linux
-# export PATH=${PATH}:$ANDROID_HOME/emulator:$ANDROID_HOME/tools/bin:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+# EXPORT variables for Android SDK
+# export ANDROID_AVD_HOME=$HOME/.android/avd
+# export ANDROID_SDK_ROOT=/usr/local/Caskroom/android-sdk/3859397
+# export PATH=${PATH}:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools
 
-# Github
+# GITHUB
+export HOMEBREW_NO_ANALYTICS=1
+export HOMEBREW_GITHUB_API_TOKEN=""
 export GITHUB_TOKEN=""
 
-# Slack
-export SLACK_CLI_TOKEN=""
+# docker configuration
+# export DOCKER_HOST=tcp://192.168.59.103:2376
+# export DOCKER_CERT_PATH=/Users/GCAT/.boot2docker/certs/boot2docker-vm
+# export DOCKER_TLS_VERIFY=1
+
+# docker shell config
+# $(boot2docker shellinit)
 
 # Node Version Manager
 # export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# . "/usr/local/opt/nvm/nvm.sh"
+
+# Fastlane
+# export PATH="$HOME/.fastlane/bin:$PATH"
