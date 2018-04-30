@@ -166,8 +166,8 @@ if has("gui_running")
    " Remove Toolbar
    set guioptions-=T
 else
-   "colorscheme default
-   colorscheme xoria256
+   colorscheme default
+   "colorscheme xoria256
 endif
 
 "Status line gnarliness

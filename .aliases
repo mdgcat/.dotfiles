@@ -8,11 +8,6 @@ alias .5='cd ../../../../../'
 alias .6='cd ../../../../../../'
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
-alias quake=~/Applications/ioquake3/ioquake3.app/Contents/MacOS/ioquake3
-alias fig="docker-compose"
-alias mplayer="mpv"
-alias docker-start="bash --login '/Applications/Docker/Docker Quickstart Terminal.app/Contents/Resources/Scripts/start.sh'"
-alias smyers="mpv 'https://www.youtube.com/watch?v=4k1xY7v8dDQ'"
 alias weather='curl http://wttr.in/seattle'
 
 # Detect which `ls` flavor is in use
