@@ -115,3 +115,9 @@ for file in ~/.{exports,aliases}; do
     [ -d "$file" ] && source "$file/*"
 done
 unset file
+
+precmd() {
+  if [ -n "$TMUX" ]; then
+    tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD"
+  fi
+}
