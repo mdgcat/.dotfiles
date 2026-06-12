@@ -3,11 +3,6 @@
 export EDITOR="vim"
 export VISUAL="vim"
 
-# Larger bash history (allow 32³ entries; default is 500)
-export HISTSIZE=32768
-export HISTFILESIZE=$HISTSIZE
-export HISTCONTROL=ignoredups:ignorespace
-# Make some commands not show up in history
 export HISTIGNORE="ls:cd:cd -:exit:history:git status"
 
 # Prefer US English and use UTF-8
@@ -27,8 +22,12 @@ export MANPAGER="less -X"
 
 # GITHUB
 export HOMEBREW_NO_ANALYTICS=1
+export HOMEBREW_NO_ENV_HINTS=1
 export HOMEBREW_GITHUB_API_TOKEN=""
 export GITHUB_TOKEN=""
+
+# Expo
+export EXPO_NO_TELEMETRY=1
 
 # docker configuration
 # export DOCKER_HOST=tcp://192.168.59.103:2376
@@ -39,8 +38,12 @@ export GITHUB_TOKEN=""
 # $(boot2docker shellinit)
 
 # Node Version Manager
-# export NVM_DIR="$HOME/.nvm"
-# . "/usr/local/opt/nvm/nvm.sh"
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
-# Fastlane
-# export PATH="$HOME/.fastlane/bin:$PATH"
+# Ruby
+export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+
+# local bin
+export PATH="$HOME/.local/bin:$PATH"
