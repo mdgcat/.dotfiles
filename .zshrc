@@ -1,6 +1,9 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -112,6 +115,3 @@ for file in ~/.{exports,aliases}; do
     [ -d "$file" ] && source "$file/*"
 done
 unset file
-
-# Homebrew
-eval "$(/opt/homebrew/bin/brew shellenv)"
