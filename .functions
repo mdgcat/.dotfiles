@@ -8,166 +8,8 @@ ssh_untar() {
     ssh $1 "tar -pcz $2" | tar -pxz
 }
 
-youtube_play() {
-    local_video_file=/tmp/video.flv
-    fifo_loc=/tmp/fifo
-    rm $local_video_file
-
-    if [[ ! -p $fifo_loc ]]; then
-        mkfifo $fifo_loc
-    fi
-
-    youtube-dl --no-part --max-quality 5 -o $local_video_file $1 > $fifo_loc & disown
-
-    counter=0
-
-    while ! grep '\[download\]' $fifo_loc; do
-
-        sleep 1
-        counter=$(($counter + 1))
-
-        if [ $counter -ge 10 ]; then
-            exit 1
-        fi
-    done
-
-    mplayer -vo null $local_video_file
-    rm $fifo_loc
-}
-
-histogram() {
-    if [ $# -lt 1 ]
-    then
-        echo "Usage: histogram  [field] [precision]"
-        return 0
-    fi
-
-    field=1
-    if [ $# -gt 1 ]
-    then
-        field=$2
-    fi
-
-    if [ $# -gt 2 ]
-    then
-        precision="."
-        for i in `seq 1 1 $3`
-        do
-            precision=$precision.
-        done
-
-        cat $1 | gsort -k $field -n -t ',' | cut -d ',' -f $field | gsed -e "s/\($precision\).*/\1/" | uniq -c
-    else
-        cat $1 | sort -k $field -n -t ',' | cut -d ',' -f $field | uniq -c
-    fi
-}
-
-cdn() {
-    num_up=$(echo $1 | grep -o "\." | wc -l)
-    updot="./"
-    for ((i=0;i<$((${num_up}-1));i++))
-    do
-        updot="$updot../"
-    done
-    cd $updot
-}
-
-get_cols () {
-    # Usage: get_cols [-F$separator] [file_name] [column_num]
-    # separator
-    separator=' '
-    column_list=""
-    for column_num in $@; do
-        [ -r $column_num ] && continue
-
-        if echo $column_num | grep '\-F' ; then
-            separator=$(echo $column_num | sed 's/-F//g' )
-            continue
-        fi
-
-        [ $column_num -lt '0' ] && column_num="(NF + 1 $column_num )" #Negative indices like python's array[-1]
-
-        [ -z $column_list ] && column_num="\$$column_num" || column_num=",\$$column_num" # Place commas appropriately.
-
-        column_list="$column_list$column_num"
-    done
-    unset column_num
-
-    # Is the first parameter a file?
-    awk_string="BEGIN { FS = \"$separator\" } ; {print $column_list}"
-
-    if [ -r $1 ]; then
-        awk $awk_string $1
-    else
-        awk "$awk_string"
-    fi
-
-    unset column_list
-    unset awk_string
-}
-
-aggregate () {
-    awk "{sum += \$1} END { printf \"%d\n\", sum }"
-}
-
-git_modified () {
-	git status | grep modified | get_cols -1
-}
-
-get_col () {
-	for item in `awk "{print \\$$@}"`; do
-		printf $item
-		printf '\n'
-	done
-}
-
-get_line() {
-	if [ -t 0 ]; then
-		head -n $1 | tail -n 1
-	else
-		head -n $1 $2 | tail -n 1
-	fi
-}
-
 du_sorted () {
     du "$@" | sort -n | get_col 2 | xargs du -hs
-}
-
-function git_checkout_last() {
-	git checkout @{-1}
-}
-
-function average () {
-	if [ '0' -eq $# ]
-	then
-		awk '{print $1}' | awk '{s+=$1} END{print "Sum: "s, "\nNumber of lines : "NR, "\nAverage: "s/(NR)}'
-	else
-		awk '{print $1}' | awk '{s+=$1} END{print "Sum: "s, "\nNumber of lines : "NR, "\nAverage: "s/(NR)}' $1
-	fi
-}
-
-function get_shas_that_touched() {
-    git log --oneline --reverse "$@" | get_col 1
-}
-
-function echo_hash_if_exp_found_in_filename_diff() {
-    [ ! -z "$(git diff $1~1 $1 -- $2 | cat | grep $3)" ] && echo $1
-}
-
-function get_shas_that_touched_with_grep() {
-    get_shas_that_touched $1 | xargs -I the_hash sh -c 'echo_hash_if_exp_found_in_filename_diff the_hash $1 $2'
-}
-
-function show_interdiffs_matching_grep() {
-    get_shas_that_touched_with_grep $1 $2 | xargs -I hash sh -c 'git diff hash~1 hash -- $1'
-}
-
-function find_all_ssh_agent_sockets() {
-    find /tmp -type s -name agent.\* 2> /dev/null | grep '/tmp/ssh-.*/agent.*'
-}
-
-function set_ssh_agent_socket() {
-    export SSH_AUTH_SOCK=$(find_all_ssh_agent_sockets | tail -n 1 | awk -F: '{print $1}')
 }
 
 # Create a new directory and enter it
@@ -187,41 +29,6 @@ function fs() {
     else
         du $arg .[^.]* *
     fi
-}
-
-# Use Git’s colored diff when available
-hash git &>/dev/null
-if [ $? -eq 0 ]; then
-    function diff() {
-    git diff --no-index --color-words "$@"
-    }
-fi
-
-# Create a data URL from a file
-function dataurl() {
-    local mimeType=$(file -b --mime-type "$1")
-    if [[ $mimeType == text/* ]]; then
-        mimeType="${mimeType};charset=utf-8"
-    fi
-    echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')"
-}
-
-# Start an HTTP server from a directory, optionally specifying the port
-function server() {
-    local port="${1:-8000}"
-    sleep 1 && open "http://localhost:${port}/" &
-	# Set the default Content-Type to `text/plain` instead of `application/octet-stream`
-	# And serve everything as UTF-8 (although not technically correct, this doesn’t break anything for binary files)
-    python -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n\tmap[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port"
-}
-
-# Start a PHP server from a directory, optionally specifying the port
-# (Requires PHP 5.4.0+.)
-function phpserver() {
-    local port="${1:-4000}"
-    local ip=$(ipconfig getifaddr en1)
-    sleep 1 && open "http://${ip}:${port}/" &
-    php -S "${ip}:${port}"
 }
 
 # Compare original and gzipped file size
@@ -249,11 +56,6 @@ function json() {
     fi
 }
 
-# All the dig info
-function digga() {
-    dig +nocmd "$1" any +multiline +noall +answer
-}
-
 # Escape UTF-8 characters into their 3-byte format
 function escape() {
     printf "\\\x%s" $(printf "$@" | xxd -p -c1 -u)
@@ -272,48 +74,99 @@ function codepoint() {
     echo # newline
 }
 
-# Add note to Notes.app (OS X 10.8)
-# Usage: `note 'foo'` or `echo 'foo' | note`
-function note() {
-    local text
-    if [ -t 0 ]; then # argument
-	text="$1"
-    else # pipe
-	text=$(cat)
-    fi
-    body=$(echo "$text" | sed -E 's|$|<br>|g')
-    osascript >/dev/null <<EOF
-tell application "Notes"
-	tell account "iCloud"
-		tell folder "Notes"
-			make new note with properties {name:"$text", body:"$body"}
-		end tell
-	end tell
-end tell
-EOF
-}
-
-# Add reminder to Reminders.app (OS X 10.8)
-# Usage: `remind 'foo'` or `echo 'foo' | remind`
-function remind() {
-    local text
-    if [ -t 0 ]; then
-	text="$1" # argument
-    else
-	text=$(cat) # pipe
-    fi
-    osascript >/dev/null <<EOF
-tell application "Reminders"
-	tell the default list
-		make new reminder with properties {name:"$text"}
-	end tell
-end tell
-EOF
-}
-
 # Manually remove a downloaded app or file from the quarantine
 function unquarantine() {
     for attribute in com.apple.metadata:kMDItemDownloadedDate com.apple.metadata:kMDItemWhereFroms com.apple.quarantine; do
 	xattr -r -d "$attribute" "$@"
     done
+}
+
+function removeMacData() {
+    # ${1:-.} is a bash parameter expansion with a default value:
+    #   $1 — the first argument passed to the function
+    #   :- — "use this default if the value is unset or empty"
+    #   .  — the default value, which means "current directory"
+    # So ${1:-.} means: use $1 if it was provided, otherwise use .
+    #
+    # Examples:
+    # - removeMacData /tmp/foo → runs find /tmp/foo ...
+    # - removeMacData → runs find . ...
+    #
+    # Prevent Creation on External/Network Drives on MacOS
+    # For USB and external drives:
+    #     defaults write com.apple.desktopservices DSDontWriteUSBStores -bool TRUE
+    # For network servers and shared drives:
+    #     defaults write com.apple.desktopservices DSDontWriteNetworkStores true
+
+    find "${1:-.}" -type f \( -name '.DS_Store' -o -name '._*' \) -print -delete
+}
+
+function renfilename() {
+    # $1 and $2 are the first and second arguments passed to the function.
+    # 'local' means the variable only exists inside this function — it won't
+    # leak out and overwrite anything in your shell session.
+    local flag="$1"
+    local input="$2"
+
+    # [[ ... ]] is bash's test block. -z "$input" means "is this string empty?".
+    # The whole condition says: if the flag is neither -t nor -f, OR if the input
+    # is empty, bail out. 'return 1' exits the function with an error code
+    # (non-zero = failure in Unix convention).
+    if [[ "$flag" != "-t" && "$flag" != "-f" ]] || [[ -z "$input" ]]; then
+        echo "Usage: renfilename [-t string | -f filename]"
+        return 1
+    fi
+
+    # Characters to strip entirely — add more between the quotes as needed
+    local strip_chars='-?:'
+
+    # A one-liner if/else. && runs the right side if the left is true; || runs
+    # its right side if the left was false. 'basename' strips the directory path
+    # e.g. basename "/tmp/my file.txt" → "my file.txt". $( ) runs a command and
+    # captures its output as a string.
+    local text
+    [[ "$flag" == "-f" ]] && text="$(basename "$input")" || text="$input"
+
+    # This is a pipeline — the output of each command feeds into the next via |.
+    # <<< "$text" is a here-string: it feeds the variable's value directly into
+    # awk as if it were a file.
+    #
+    # awk is a text-processing language:
+    #   $0                    = the entire input line
+    #   split($0, words, " ") = split the line on spaces into array 'words',
+    #                           returns the count as n
+    #   words[1]              = first word, left as-is
+    #   The for loop starts at word 2:
+    #     tolower()               lowercases the whole word
+    #     toupper(substr(w,1,1))  uppercases just the first character
+    #                             substr(w,1,1) = character at position 1, length 1
+    #     substr(w,2)             the rest of the word from position 2 onward
+    #   Words get joined with "." between them
+    #
+    # tr "'" '_'        — tr is a character translator; replaces every ' with _
+    # tr -d -- "$strip_chars" — -d means delete (not translate). The -- tells tr
+    #                           that what follows is not a flag, so a leading -
+    #                           in strip_chars is treated as a literal character.
+    local result
+    result=$(awk '{
+        n = split($0, words, " ")
+        out = words[1]
+        for (i = 2; i <= n; i++) {
+            w = tolower(words[i])
+            w = toupper(substr(w, 1, 1)) substr(w, 2)
+            out = out "." w
+        }
+        print out
+    }' <<< "$text" | tr "'" '_' | tr -d -- "$strip_chars")
+
+    if [[ "$flag" == "-t" ]]; then
+        # -n on echo suppresses the trailing newline (you don't want a newline
+        # copied to your clipboard).
+        echo "$result"
+        echo -n "$result" | xclip -selection clipboard
+    else
+        # dirname gives the directory portion of the path, and mv renames the
+        # file in place. -- protects against filenames that start with -.
+        mv -- "$input" "$(dirname "$input")/$result"
+    fi
 }

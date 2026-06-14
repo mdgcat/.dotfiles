@@ -100,7 +100,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 # Alias, exports, prompt definitions
 # Runs all files seperately
-for file in ~/.{exports,aliases,prompt}; do
+for file in ~/.{exports,aliases,functions,prompt}; do
         [ -r "$file" ] && source "$file"
     [ -d "$file" ] && source "$file/*"
 done
