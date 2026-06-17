@@ -96,77 +96,8 @@ function removeMacData() {
     # For USB and external drives:
     #     defaults write com.apple.desktopservices DSDontWriteUSBStores -bool TRUE
     # For network servers and shared drives:
-    #     defaults write com.apple.desktopservices DSDontWriteNetworkStores true
+    #     defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 
     find "${1:-.}" -type f \( -name '.DS_Store' -o -name '._*' \) -print -delete
 }
 
-function renfilename() {
-    # $1 and $2 are the first and second arguments passed to the function.
-    # 'local' means the variable only exists inside this function — it won't
-    # leak out and overwrite anything in your shell session.
-    local flag="$1"
-    local input="$2"
-
-    # [[ ... ]] is bash's test block. -z "$input" means "is this string empty?".
-    # The whole condition says: if the flag is neither -t nor -f, OR if the input
-    # is empty, bail out. 'return 1' exits the function with an error code
-    # (non-zero = failure in Unix convention).
-    if [[ "$flag" != "-t" && "$flag" != "-f" ]] || [[ -z "$input" ]]; then
-        echo "Usage: renfilename [-t string | -f filename]"
-        return 1
-    fi
-
-    # Characters to strip entirely — add more between the quotes as needed
-    local strip_chars='-?:'
-
-    # A one-liner if/else. && runs the right side if the left is true; || runs
-    # its right side if the left was false. 'basename' strips the directory path
-    # e.g. basename "/tmp/my file.txt" → "my file.txt". $( ) runs a command and
-    # captures its output as a string.
-    local text
-    [[ "$flag" == "-f" ]] && text="$(basename "$input")" || text="$input"
-
-    # This is a pipeline — the output of each command feeds into the next via |.
-    # <<< "$text" is a here-string: it feeds the variable's value directly into
-    # awk as if it were a file.
-    #
-    # awk is a text-processing language:
-    #   $0                    = the entire input line
-    #   split($0, words, " ") = split the line on spaces into array 'words',
-    #                           returns the count as n
-    #   words[1]              = first word, left as-is
-    #   The for loop starts at word 2:
-    #     tolower()               lowercases the whole word
-    #     toupper(substr(w,1,1))  uppercases just the first character
-    #                             substr(w,1,1) = character at position 1, length 1
-    #     substr(w,2)             the rest of the word from position 2 onward
-    #   Words get joined with "." between them
-    #
-    # tr "'" '_'        — tr is a character translator; replaces every ' with _
-    # tr -d -- "$strip_chars" — -d means delete (not translate). The -- tells tr
-    #                           that what follows is not a flag, so a leading -
-    #                           in strip_chars is treated as a literal character.
-    local result
-    result=$(awk '{
-        n = split($0, words, " ")
-        out = words[1]
-        for (i = 2; i <= n; i++) {
-            w = tolower(words[i])
-            w = toupper(substr(w, 1, 1)) substr(w, 2)
-            out = out "." w
-        }
-        print out
-    }' <<< "$text" | tr "'" '_' | tr -d -- "$strip_chars")
-
-    if [[ "$flag" == "-t" ]]; then
-        # -n on echo suppresses the trailing newline (you don't want a newline
-        # copied to your clipboard).
-        echo "$result"
-        echo -n "$result" | xclip -selection clipboard
-    else
-        # dirname gives the directory portion of the path, and mv renames the
-        # file in place. -- protects against filenames that start with -.
-        mv -- "$input" "$(dirname "$input")/$result"
-    fi
-}
