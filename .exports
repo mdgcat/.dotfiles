@@ -17,10 +17,12 @@ export LESS_TERMCAP_md="$ORANGE"
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X"
 
-# EXPORT variables for Android SDK
-# export ANDROID_AVD_HOME=$HOME/.android/avd
-# export ANDROID_SDK_ROOT=/usr/local/Caskroom/android-sdk/3859397
-# export PATH=${PATH}:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools
+# Android JAVA & SDK
+# export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+# export ANDROID_HOME=$HOME/Library/Android/sdk
+# export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+# export PATH=$PATH:$ANDROID_HOME/platform-tools
+# export PATH=$PATH:$ANDROID_HOME/emulator
 
 # GITHUB
 export HOMEBREW_NO_ANALYTICS=1
@@ -29,7 +31,7 @@ export HOMEBREW_GITHUB_API_TOKEN=""
 export GITHUB_TOKEN=""
 
 # Expo
-export EXPO_NO_TELEMETRY=1
+# export EXPO_NO_TELEMETRY=1
 
 # docker configuration
 # export DOCKER_HOST=tcp://192.168.59.103:2376
@@ -40,9 +42,9 @@ export EXPO_NO_TELEMETRY=1
 # $(boot2docker shellinit)
 
 # Node Version Manager
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+# [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # Ruby
-export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+# export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
